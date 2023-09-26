@@ -18,7 +18,7 @@ class UserEntryViewModel(private val usersRepository: UsersRepository) : ViewMod
         private const val TIMEOUT_MILLIS = 5_000L
     }
     data class HomeUiState(val userList: List<User> = listOf())
-    val homeUiState : StateFlow<HomeUiState> = usersRepository.getAllUsersStream().map {HomeUiState(it)}
+    val homeUiState : StateFlow<HomeUiState> = usersRepository.getAllUsersStream().map {it -> HomeUiState(it)}
         .stateIn(
             scope = viewModelScope,
             started = SharingStarted.WhileSubscribed(TIMEOUT_MILLIS),
