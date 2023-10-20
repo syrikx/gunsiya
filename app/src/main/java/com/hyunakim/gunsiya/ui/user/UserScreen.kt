@@ -1,6 +1,6 @@
 package com.hyunakim.gunsiya.ui.user
 
-import androidx.compose.foundation.layout.Arrangement
+import android.widget.Toast
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -11,24 +11,19 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Button
 import androidx.compose.material.OutlinedTextField
-import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.dimensionResource
-import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.hyunakim.gunsiya.R
 import com.hyunakim.gunsiya.data.User
 import com.hyunakim.gunsiya.ui.AppViewModelProvider
-import com.hyunakim.gunsiya.ui.home.UserSelect
+import com.hyunakim.gunsiya.ui.home.HomeViewModel
 import kotlinx.coroutines.launch
 
 @Composable
@@ -36,12 +31,12 @@ fun UserScreen(
     modifier: Modifier = Modifier,
     viewModel: UserEntryViewModel = viewModel(factory= AppViewModelProvider.Factory)
 ) {
-    val homeUiState by viewModel.homeUiState.collectAsState()
+    val allUsersState by viewModel.allUsersState.collectAsState()
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = modifier
     ) {
-        UserSelect(userList = homeUiState.userList, showAddUserButton = true)
+        UserSelect(userList = allUsersState.userList, isUserScreen = true, viewModel)
         UserEntryScreen(
             navigateBack = { /*TODO*/ },
             onNavigateUp = { /*TODO*/ },
@@ -80,6 +75,41 @@ fun UserScreen(
 //}
 
 @Composable
+fun UserSelect(
+    userList : List<User>,
+    isUserScreen : Boolean = false,
+    viewModel: UserEntryViewModel = viewModel(factory= AppViewModelProvider.Factory),
+    homeViewModel: HomeViewModel = viewModel(factory= AppViewModelProvider.Factory)
+){
+    val coroutineScope = rememberCoroutineScope()
+    Row {
+        val context = LocalContext.current
+        if (isUserScreen){
+            androidx.compose.material3.Button(
+                onClick = {
+                    Toast.makeText(context, "새 사용자를 등록합니다.", Toast.LENGTH_SHORT).show()
+                    viewModel.initUser()
+                }) {
+                androidx.compose.material3.Text("+")
+            }
+        }
+        userList.forEach{ it ->
+            androidx.compose.material3.Button(
+                onClick = {
+                    coroutineScope.launch {
+                        viewModel.getUser(it.id)
+                    }
+                    homeViewModel.updateCurrentUser(it)
+//                    homeViewModel.currentUser=it
+                    Toast.makeText(context, "${homeViewModel.currentUser.value.id}", Toast.LENGTH_SHORT).show()
+                }) {
+                androidx.compose.material3.Text(it.name)
+            }
+        }
+    }
+}
+
+@Composable
 fun UserEntryScreen(
     navigateBack: () -> Unit,
     onNavigateUp: () -> Unit,
@@ -87,6 +117,7 @@ fun UserEntryScreen(
     modifier: Modifier = Modifier,
     viewModel: UserEntryViewModel = viewModel(factory = AppViewModelProvider.Factory)
 ) {
+//    val uiState = viewModel.uiState.collectAsState()
     val coroutineScope = rememberCoroutineScope()
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -94,10 +125,21 @@ fun UserEntryScreen(
     ){
         UserEntryBody(
             userUiState = viewModel.userUiState,
+//            userUiState = uiState.value,
             onUserValueChange = viewModel::updateUiState,
             onSaveClick = {
                 coroutineScope.launch {
                     viewModel.saveUser()
+                    navigateBack()
+                }
+            },
+            onCancleClick = {
+                    viewModel.initUser()
+                    navigateBack()
+            },
+            onDeleteClick = {
+                coroutineScope.launch {
+                    viewModel.deleteUser(viewModel.userUiState.userDetails.toUser())
                     navigateBack()
                 }
             },
@@ -113,6 +155,8 @@ fun UserEntryBody(
     userUiState: UserUiState,
     onUserValueChange: (UserDetails) -> Unit,
     onSaveClick: () -> Unit,
+    onCancleClick: () -> Unit,
+    onDeleteClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     Column(
@@ -126,7 +170,7 @@ fun UserEntryBody(
             modifier = Modifier.fillMaxWidth()
         )
         Button(
-            onClick = onSaveClick,
+            onClick = onCancleClick,
             modifier = Modifier.fillMaxWidth()
         ) {
             Text(text = "취소")
@@ -137,6 +181,12 @@ fun UserEntryBody(
             modifier = Modifier.fillMaxWidth()
         ) {
             Text(text = "저장")
+        }
+        Button(
+            onClick = onDeleteClick,
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            Text(text = "삭제")
         }
     }
 }
@@ -159,10 +209,17 @@ fun UserInput(
     val coroutineScope = rememberCoroutineScope()
 
     Column(modifier = Modifier.padding(16.dp)) {
+        val context = LocalContext.current
         OutlinedTextField(
             value = userDetails.name,
-            onValueChange = { onValueChange(userDetails.copy(name = it)) },
-            label = { Text("이름") }
+            onValueChange = {
+                Toast.makeText(context, it, Toast.LENGTH_SHORT).show()
+                onValueChange(userDetails.copy(name = it))
+            },
+            label = { Text("이름") },
+            modifier = Modifier.fillMaxWidth(),
+            enabled = enabled,
+            singleLine = true
         )
         Spacer(modifier=Modifier.height(16.dp))
         OutlinedTextField(

@@ -9,27 +9,48 @@ import com.hyunakim.gunsiya.data.User
 import com.hyunakim.gunsiya.data.UsersRepository
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.filterNotNull
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.launch
 
 class UserEntryViewModel(private val usersRepository: UsersRepository) : ViewModel() {
 
     companion object {
         private const val TIMEOUT_MILLIS = 5_000L
     }
-    data class HomeUiState(val userList: List<User> = listOf())
-    val homeUiState : StateFlow<HomeUiState> = usersRepository.getAllUsersStream().map {it -> HomeUiState(it)}
+//    private val userId: Int = 1
+    data class AllUsersState(val userList: List<User> = listOf())
+    val allUsersState : StateFlow<AllUsersState> = usersRepository.getAllUsersStream().map { it -> AllUsersState(it)}
         .stateIn(
             scope = viewModelScope,
             started = SharingStarted.WhileSubscribed(TIMEOUT_MILLIS),
-            initialValue = HomeUiState()
+            initialValue = AllUsersState()
         )
+    var userUiState by mutableStateOf(UserUiState())
+        private set
+//    init {
+//        viewModelScope.launch {
+//            getUser(userId)
+//        }
+//    }
+//    val uiState : StateFlow<UserUiState> =
+//        usersRepository.getUserStream(userId)
+//            .filterNotNull()
+//            .map { it ->
+//                    UserUiState(userDetails = it.toUserDetails())}
+//        .stateIn(
+//            scope = viewModelScope,
+//            started = SharingStarted.WhileSubscribed(TIMEOUT_MILLIS),
+//            initialValue = UserUiState()
+//        )
+
 
     /**
      * Holds current user ui state
      */
-    var userUiState by mutableStateOf(UserUiState())
-        private set
+
 
     /**
      * Updates the [userUiState] with the value provided in the argument. This method also triggers
@@ -50,6 +71,18 @@ class UserEntryViewModel(private val usersRepository: UsersRepository) : ViewMod
         if (validateInput()){
             usersRepository.insertUser(userUiState.userDetails.toUser())
         }
+    }
+
+    suspend fun getUser(userId : Int){
+        userUiState = usersRepository.getUserStream(userId)
+            .filterNotNull().first()
+            .toUserUiState(true)
+    }
+    fun initUser(){
+        userUiState = UserUiState()
+    }
+    suspend fun deleteUser(user : User){
+        usersRepository.deleteUser(user)
     }
 }
 
@@ -102,3 +135,5 @@ fun User.toUserDetails(): UserDetails = UserDetails(
     patientCode = patientCode,
     isCurrentUser = isCurrentUser
 )
+
+

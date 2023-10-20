@@ -1,5 +1,6 @@
 package com.hyunakim.gunsiya.ui.home
 
+import android.widget.Toast
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
@@ -12,12 +13,14 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.hyunakim.gunsiya.data.User
 import com.hyunakim.gunsiya.ui.AppViewModelProvider
+import com.hyunakim.gunsiya.ui.user.UserSelect
 
 @Composable
 fun HomeScreen(
@@ -26,7 +29,7 @@ fun HomeScreen(
     viewModel: HomeViewModel = viewModel(factory= AppViewModelProvider.Factory)
 ) {
     val homeUiState by viewModel.homeUiState.collectAsState()
-
+    Text("${viewModel.currentUser.collectAsState().value.name}님 환영합니다.")
     HomeBody(
         userList = homeUiState.userList,
 //        onItemClick = navigateToItemUpdate,
@@ -50,30 +53,6 @@ fun HomeBody(userList: List<User>,
             )
         } else {
             UserSelect(userList)
-        }
-    }
-}
-
-@Composable
-fun UserSelect(){
-
-}
-
-@Composable
-fun UserSelect(
-    userList : List<User>,
-    showAddUserButton : Boolean = false
-){
-    Row {
-        userList.forEach{ it ->
-            Button(onClick = { /*TODO*/ }) {
-                Text(it.name)
-            }
-        }
-        if (showAddUserButton){
-            Button(onClick = { /*TODO*/ }) {
-                Text("+")
-            }
         }
     }
 }
