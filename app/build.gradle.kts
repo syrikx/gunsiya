@@ -54,6 +54,7 @@ android {
 }
 
 dependencies {
+    implementation(project(":kalendar"))
     implementation(platform("androidx.compose:compose-bom:2023.08.00"))
     implementation("androidx.core:core-ktx:1.10.1")
     implementation("androidx.lifecycle:lifecycle-livedata-ktx:${rootProject.extra["lifecycle_version"]}")
@@ -81,4 +82,6 @@ dependencies {
 
     debugImplementation("androidx.compose.ui:ui-test-manifest")
     debugImplementation("androidx.compose.ui:ui-tooling")
+
+    implementation ("org.jetbrains.kotlinx:kotlinx-datetime:0.4.0")
 }
