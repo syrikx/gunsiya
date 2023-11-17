@@ -4,8 +4,12 @@ import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
+import androidx.room.TypeConverter
+import androidx.room.TypeConverters
+import kotlinx.datetime.LocalDateTime
 
-@Database(entities = [User::class, Record::class], version = 2)
+@Database(entities = [User::class, Record::class], version = 9)
+@TypeConverters(Converters::class)
 abstract class GunsiyaDatabase : RoomDatabase() {
     abstract fun userDao(): UserDao
     abstract fun recordDao(): RecordDao
@@ -30,3 +34,16 @@ abstract class GunsiyaDatabase : RoomDatabase() {
         }
     }
 }
+
+class Converters {
+    @TypeConverter
+    fun fromTimestamp(value: String?): LocalDateTime? {
+        return value?.let { LocalDateTime.parse(it) }
+    }
+
+    @TypeConverter
+    fun dateToTimestamp(date: LocalDateTime?): String? {
+        return date?.toString()
+    }
+}
+

@@ -1,5 +1,6 @@
 package com.hyunakim.gunsiya.ui.user
 
+import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -25,6 +26,9 @@ import com.hyunakim.gunsiya.data.User
 import com.hyunakim.gunsiya.ui.AppViewModelProvider
 import com.hyunakim.gunsiya.ui.home.HomeViewModel
 import kotlinx.coroutines.launch
+import kotlinx.datetime.Clock
+import kotlinx.datetime.TimeZone
+import kotlinx.datetime.toLocalDateTime
 
 @Composable
 fun UserScreen(
@@ -32,11 +36,15 @@ fun UserScreen(
     viewModel: UserEntryViewModel = viewModel(factory= AppViewModelProvider.Factory)
 ) {
     val allUsersState by viewModel.allUsersState.collectAsState()
+    val userList = allUsersState.userList
+    userList.forEach(){
+        Log.d("userList", userList.toString())
+    }
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = modifier
     ) {
-        UserSelect(userList = allUsersState.userList, isUserScreen = true, viewModel)
+        UserSelect(userList, isUserScreen = true)
         UserEntryScreen(
             navigateBack = { /*TODO*/ },
             onNavigateUp = { /*TODO*/ },
@@ -82,6 +90,7 @@ fun UserSelect(
     homeViewModel: HomeViewModel = viewModel(factory= AppViewModelProvider.Factory)
 ){
     val coroutineScope = rememberCoroutineScope()
+    val currentUser = homeViewModel.currentUser.collectAsState()
     Row {
         val context = LocalContext.current
         if (isUserScreen){
@@ -97,13 +106,21 @@ fun UserSelect(
             androidx.compose.material3.Button(
                 onClick = {
                     coroutineScope.launch {
-                        viewModel.getUser(it.id)
+//                        Log.d("get user", "${it.id}")
+                        var user = viewModel.getUser(it.id)
+//                        Log.d("user", "${user.userDetails.id}")
+                        homeViewModel.updateCurrentUser(it)
+                        viewModel.updateUserSelectedTime()
+                        Log.d("userdetails", viewModel.userUiState.userDetails.lastSelectedTime.toString())
+//                        Log.d("records", "${homeViewModel.getUserRecords(it.id)}")
                     }
-                    homeViewModel.updateCurrentUser(it)
-//                    homeViewModel.currentUser=it
-                    Toast.makeText(context, "${homeViewModel.currentUser.value.id}", Toast.LENGTH_SHORT).show()
+//                    Toast.makeText(context, "${homeViewModel.currentUser.value.id}", Toast.LENGTH_SHORT).show()
                 }) {
-                androidx.compose.material3.Text(it.name)
+                if (it == currentUser.value){
+                    androidx.compose.material3.Text("${it.name} (선택)")
+                } else {
+                    androidx.compose.material3.Text(it.name)
+                }
             }
         }
     }

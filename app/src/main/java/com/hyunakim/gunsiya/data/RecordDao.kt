@@ -13,11 +13,11 @@ interface RecordDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insert(record: Record) // Create
 
-    @Query("SELECT * FROM records WHERE id = :recordId")
-    fun getRecord(recordId: Int): Flow<Record> // Read
-
     @Query("SELECT * FROM records WHERE userId = :userId")
-    fun getRecordsByUserId(userId : Int): List<Record>
+    fun getRecordsByUserId(userId : Int): Flow<List<Record>>
+
+    @Query("SELECT * FROM records WHERE userId = :userId AND date = :date")
+    fun getRecordsByUserIdAndDate(userId : Int, date: String): Flow<Record>
 
     @Update
     suspend fun update(record: Record) // Update

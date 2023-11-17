@@ -93,6 +93,7 @@ data class KalendarColor(
 
         internal fun previewDefault() = KalendarColor(
             kalendarBackgroundColor.first(), backgroundColor.first(), headerColors.first()
+//            Color(0xBBBBBBBB), Color(0xBBBBBBBB), Color(0xBBBBBBBB)
         )
     }
 }

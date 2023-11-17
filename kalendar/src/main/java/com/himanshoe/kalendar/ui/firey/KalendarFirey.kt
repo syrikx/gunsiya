@@ -43,10 +43,12 @@ import com.himanshoe.kalendar.ui.oceanic.util.isLeapYear
 import com.himanshoe.kalendar.util.MultiplePreviews
 import com.himanshoe.kalendar.util.onDayClicked
 import kotlinx.datetime.Clock
+import kotlinx.datetime.DateTimeUnit
 import kotlinx.datetime.DayOfWeek
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.Month
 import kotlinx.datetime.TimeZone
+import kotlinx.datetime.plus
 import kotlinx.datetime.toLocalDate
 import kotlinx.datetime.todayIn
 
@@ -83,7 +85,8 @@ internal fun KalendarFirey(
     headerContent: (@Composable (Month, Int) -> Unit)? = null,
     onDayClick: (LocalDate, List<KalendarEvent>) -> Unit = { _, _ -> },
     onRangeSelected: (KalendarSelectedDayRange, List<KalendarEvent>) -> Unit = { _, _ -> },
-    onErrorRangeSelected: (RangeSelectionError) -> Unit = {}
+    onErrorRangeSelected: (RangeSelectionError) -> Unit = {},
+    coloredDates : List<LocalDate> = listOf(Clock.System.todayIn(TimeZone.currentSystemDefault()).plus(1,DateTimeUnit.DAY), Clock.System.todayIn(TimeZone.currentSystemDefault()).plus(2,DateTimeUnit.DAY))
 ) {
     val today = currentDay ?: Clock.System.todayIn(TimeZone.currentSystemDefault())
     val selectedRange = remember { mutableStateOf<KalendarSelectedDayRange?>(null) }
@@ -156,6 +159,7 @@ internal fun KalendarFirey(
                         } else {
                             KalendarDay(
                                 date = day,
+                                colored = checkDateColored(day, coloredDates),
                                 selectedDate = selectedDate.value,
                                 kalendarColors = kalendarColors.color[currentMonthIndex],
                                 kalendarEvents = events,
@@ -187,14 +191,6 @@ internal fun KalendarFirey(
             }
         )
         Spacer(modifier = Modifier.padding(vertical = 4.dp))
-        Column(
-            horizontalAlignment = Alignment.CenterHorizontally,
-        ){
-            Text(
-                text = "${currentDay}일",
-                textAlign = TextAlign.Center
-            )
-        }
     }
 }
 
@@ -220,14 +216,18 @@ private fun calculateDay(day: Int, currentMonth: Month, currentYear: Int): Local
     return "$currentYear-$monthValue-$dayValue".toLocalDate()
 }
 
-@Composable
-@MultiplePreviews
-private fun KalendarFireyPreview() {
-    KalendarFirey(
-        currentDay = Clock.System.todayIn(
-            TimeZone.currentSystemDefault()
-        ),
-        kalendarHeaderTextKonfig = KalendarTextKonfig.previewDefault(),
-        daySelectionMode = DaySelectionMode.Range
-    )
+private fun checkDateColored(date: LocalDate, coloredDates: List<LocalDate>): Boolean {
+    return date in coloredDates
 }
+
+//@Composable
+//@MultiplePreviews
+//private fun KalendarFireyPreview() {
+//    KalendarFirey(
+//        currentDay = Clock.System.todayIn(
+//            TimeZone.currentSystemDefault()
+//        ),
+//        kalendarHeaderTextKonfig = KalendarTextKonfig.previewDefault(),
+//        daySelectionMode = DaySelectionMode.Range
+//    )
+//}

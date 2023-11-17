@@ -35,6 +35,7 @@ private const val TOWNED_DOWN_ALPHA = 0.4F
  * @return The modified modifier.
  */
 fun Modifier.dayBackgroundColor(
+    colored : Boolean,
     selected: Boolean,
     color: Color,
     date: LocalDate,
@@ -44,6 +45,7 @@ fun Modifier.dayBackgroundColor(
 
     val backgroundColor = when {
         selected -> color
+        colored -> color
         selectedRange != null && date in selectedRange.start..selectedRange.end -> {
             val alpha = if (inRange) FULL_ALPHA else TOWNED_DOWN_ALPHA
             color.copy(alpha = alpha)

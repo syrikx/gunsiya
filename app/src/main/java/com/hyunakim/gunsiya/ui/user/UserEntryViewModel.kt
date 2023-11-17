@@ -1,5 +1,6 @@
 package com.hyunakim.gunsiya.ui.user
 
+import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -11,9 +12,13 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
-import kotlinx.coroutines.launch
+import kotlinx.datetime.Clock
+import kotlinx.datetime.LocalDateTime
+import kotlinx.datetime.TimeZone
+import kotlinx.datetime.toLocalDateTime
 
 class UserEntryViewModel(private val usersRepository: UsersRepository) : ViewModel() {
 
@@ -57,6 +62,9 @@ class UserEntryViewModel(private val usersRepository: UsersRepository) : ViewMod
      * a validation for input values.
      */
     fun updateUiState(userDetails: UserDetails) {
+//        if (allUsersState.value.userList.isNullOrEmpty()){
+//            userDetails.isCurrentUser = true
+//        }
         userUiState =
             UserUiState(userDetails = userDetails, isEntryValid = validateInput(userDetails))
     }
@@ -69,14 +77,32 @@ class UserEntryViewModel(private val usersRepository: UsersRepository) : ViewMod
 
     suspend fun saveUser(){
         if (validateInput()){
-            usersRepository.insertUser(userUiState.userDetails.toUser())
+//            usersRepository.insertUser(userUiState.userDetails.toUser())
+            val user = userUiState.userDetails.toUser()
+            val existingUser = usersRepository.getUserStream(user.id).firstOrNull()
+
+            if (existingUser != null) {
+                usersRepository.updateUser(user)
+                updateUiState(user.toUserDetails())
+            } else {
+                usersRepository.insertUser(user)
+            }
         }
     }
 
-    suspend fun getUser(userId : Int){
+    suspend fun updateUserSelectedTime(){
+            val user = userUiState.userDetails.toUser()
+            user.lastSelectedTime = Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault())
+            Log.d("updateUserSelectedTime", user.lastSelectedTime.toString())
+            usersRepository.updateUser(user)
+            updateUiState(user.toUserDetails())
+    }
+
+    suspend fun getUser(userId : Int) : UserUiState{
         userUiState = usersRepository.getUserStream(userId)
             .filterNotNull().first()
             .toUserUiState(true)
+        return userUiState
     }
     fun initUser(){
         userUiState = UserUiState()
@@ -100,7 +126,7 @@ data class UserDetails(
     val birthDate: String = "",
     val hospitalCode: String = "",
     val patientCode: String = "",
-    val isCurrentUser : Boolean = false,
+    var lastSelectedTime : LocalDateTime = Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault())
 )
 
 /**
@@ -114,7 +140,7 @@ fun UserDetails.toUser(): User = User(
     birthDate = birthDate,
     hospitalCode = hospitalCode,
     patientCode = patientCode,
-    isCurrentUser = isCurrentUser
+    lastSelectedTime = lastSelectedTime
 )
 /**
  * Extension function to convert [User] to [UserUiState]
@@ -133,7 +159,7 @@ fun User.toUserDetails(): UserDetails = UserDetails(
     birthDate = birthDate,
     hospitalCode = hospitalCode,
     patientCode = patientCode,
-    isCurrentUser = isCurrentUser
+    lastSelectedTime = lastSelectedTime
 )
 
 

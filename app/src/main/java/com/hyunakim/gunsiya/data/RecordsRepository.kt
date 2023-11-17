@@ -11,7 +11,17 @@ interface RecordsRepository {
     /**
      * Retrieve an item from the given data source that matches with the [id].
      */
-    fun getRecordStream(id: Int): Flow<Record?>
+    fun getRecordsByUserId(userId : Int): Flow<List<Record>>
+
+    /**
+     * Retrieve an item from the given data source that matches with the [id].
+     */
+
+    fun getRecordsByUserIdAndDate(userId : Int, date : String): Flow<Record>
+
+    /**
+     * Retrieve an item from the given data source that matches with the [id].
+     */
 
     /**
      * Insert item in the data source

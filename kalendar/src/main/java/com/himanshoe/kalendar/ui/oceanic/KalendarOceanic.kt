@@ -181,6 +181,7 @@ internal fun KalendarOceanic(
                                 kalendarEvents = events,
                                 kalendarDayKonfig = kalendarDayKonfig,
                                 selectedRange = selectedRange.value,
+                                colored = false,
                             )
                         }
                     }

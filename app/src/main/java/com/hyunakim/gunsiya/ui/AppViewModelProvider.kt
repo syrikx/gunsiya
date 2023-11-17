@@ -19,7 +19,7 @@ object AppViewModelProvider {
 //        }
 //        // Initializer for ItemEntryViewModel
         initializer {
-            HomeViewModel(gunsiyaApplication().container.usersRepository)
+            HomeViewModel(gunsiyaApplication().container.usersRepository, gunsiyaApplication().container.recordsRepository)
         }
         initializer {
             UserEntryViewModel(gunsiyaApplication().container.usersRepository)

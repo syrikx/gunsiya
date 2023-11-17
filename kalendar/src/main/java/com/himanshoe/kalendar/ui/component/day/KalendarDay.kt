@@ -66,11 +66,13 @@ import kotlinx.datetime.todayIn
 @Composable
 fun KalendarDay(
     date: LocalDate,
+    colored : Boolean,
     kalendarColors: KalendarColor,
     onDayClick: (LocalDate, List<KalendarEvent>) -> Unit,
     selectedRange: KalendarSelectedDayRange?,
     modifier: Modifier = Modifier,
     selectedDate: LocalDate = date,
+//    coloredDates : List<LocalDate> = emptyList(),
     kalendarEvents: KalendarEvents = KalendarEvents(),
     kalendarDayKonfig: KalendarDayKonfig = KalendarDayKonfig.default(),
 ) {
@@ -86,6 +88,7 @@ fun KalendarDay(
             .clip(shape = CircleShape)
             .clickable { onDayClick(date, kalendarEvents.events) }
             .dayBackgroundColor(
+                colored,
                 selected,
                 kalendarColors.dayBackgroundColor,
                 date,
@@ -155,30 +158,31 @@ private fun KalendarDayPreview() {
     }
     Row {
         KalendarDay(
-            date = date,
+            date = date.plus(1,DateTimeUnit.DAY),
+            colored = true,
             kalendarColors = KalendarColor.previewDefault(),
             onDayClick = { _, _ -> },
             selectedDate = previous,
             kalendarEvents = KalendarEvents(events),
             selectedRange = null
         )
-        Spacer(modifier = Modifier.padding(vertical = 8.dp))
-        KalendarDay(
-            date = date.plus(1, DateTimeUnit.DAY),
-            kalendarColors = KalendarColor.previewDefault(),
-            onDayClick = { _, _ -> },
-            selectedDate = previous,
-            kalendarEvents = KalendarEvents(events),
-            selectedRange = null
-        )
-        Spacer(modifier = Modifier.padding(vertical = 8.dp))
-        KalendarDay(
-            date = date,
-            kalendarColors = KalendarColor.previewDefault(),
-            onDayClick = { _, _ -> },
-            selectedDate = previous,
-            kalendarEvents = KalendarEvents(events),
-            selectedRange = null
-        )
+//        Spacer(modifier = Modifier.padding(vertical = 8.dp))
+//        KalendarDay(
+//            date = date,
+//            kalendarColors = KalendarColor.previewDefault(),
+//            onDayClick = { _, _ -> },
+//            selectedDate = previous,
+//            kalendarEvents = KalendarEvents(events),
+//            selectedRange = null
+//        )
+//        Spacer(modifier = Modifier.padding(vertical = 8.dp))
+//        KalendarDay(
+//            date = date,
+//            kalendarColors = KalendarColor.previewDefault(),
+//            onDayClick = { _, _ -> },
+//            selectedDate = previous,
+//            kalendarEvents = KalendarEvents(events),
+//            selectedRange = null
+//        )
     }
 }

@@ -44,39 +44,41 @@ import java.time.Month
  * @param onRangeSelected Callback function triggered when a range of days is selected.
  * @param onErrorRangeSelected Callback function triggered when an error occurs during range selection.
  */
-@Composable
-fun Kalendar(
-    currentDay: LocalDate?,
-    kalendarType: KalendarType,
-    modifier: Modifier = Modifier,
-    showLabel: Boolean = true,
-    kalendarHeaderTextKonfig: KalendarTextKonfig? = null,
-    kalendarColors: KalendarColors = KalendarColors.default(),
-    kalendarDayKonfig: KalendarDayKonfig = KalendarDayKonfig.default(),
-    dayContent: (@Composable (LocalDate) -> Unit)? = null,
-    daySelectionMode: DaySelectionMode = DaySelectionMode.Single,
-    headerContent: (@Composable (Month, Int) -> Unit)? = null,
-    onDayClick: (LocalDate, List<KalendarEvent>) -> Unit = { _, _ -> },
-    onRangeSelected: (KalendarSelectedDayRange, List<KalendarEvent>) -> Unit = { _, _ -> },
-    onErrorRangeSelected: (RangeSelectionError) -> Unit = {}
-) {
-    Kalendar(
-        currentDay = currentDay,
-        kalendarType = kalendarType,
-        modifier = modifier,
-        daySelectionMode = daySelectionMode,
-        showLabel = showLabel,
-        kalendarHeaderTextKonfig = kalendarHeaderTextKonfig,
-        kalendarColors = kalendarColors,
-        kalendarDayKonfig = kalendarDayKonfig,
-        onDayClick = onDayClick,
-        dayContent = dayContent,
-        headerContent = headerContent,
-        events = KalendarEvents(),
-        onRangeSelected = onRangeSelected,
-        onErrorRangeSelected = onErrorRangeSelected
-    )
-}
+//@Composable
+//fun Kalendar(
+//    currentDay: LocalDate?,
+//    selectedDay : LocalDate?,
+//    kalendarType: KalendarType,
+//    modifier: Modifier = Modifier,
+//    showLabel: Boolean = true,
+//    kalendarHeaderTextKonfig: KalendarTextKonfig? = null,
+//    kalendarColors: KalendarColors = KalendarColors.default(),
+//    kalendarDayKonfig: KalendarDayKonfig = KalendarDayKonfig.default(),
+//    dayContent: (@Composable (LocalDate) -> Unit)? = null,
+//    daySelectionMode: DaySelectionMode = DaySelectionMode.Single,
+//    headerContent: (@Composable (Month, Int) -> Unit)? = null,
+//    onDayClick: (LocalDate, List<KalendarEvent>) -> Unit = { _, _ -> },
+//    onRangeSelected: (KalendarSelectedDayRange, List<KalendarEvent>) -> Unit = { _, _ -> },
+//    onErrorRangeSelected: (RangeSelectionError) -> Unit = {}
+//) {
+//    Kalendar(
+//        currentDay = currentDay,
+//        selectedDay = selectedDay,
+//        kalendarType = kalendarType,
+//        modifier = modifier,
+//        daySelectionMode = daySelectionMode,
+//        showLabel = showLabel,
+//        kalendarHeaderTextKonfig = kalendarHeaderTextKonfig,
+//        kalendarColors = kalendarColors,
+//        kalendarDayKonfig = kalendarDayKonfig,
+//        onDayClick = onDayClick,
+//        dayContent = dayContent,
+//        headerContent = headerContent,
+//        events = KalendarEvents(),
+//        onRangeSelected = onRangeSelected,
+//        onErrorRangeSelected = onErrorRangeSelected
+//    )
+//}
 
 /**
  * Composable function that represents a calendar component.
@@ -97,7 +99,7 @@ fun Kalendar(
  * @param onErrorRangeSelected Callback function triggered when an error occurs during range selection.
  */
 @Composable
-fun Kalendar(
+fun KalendarWithEvent(
     currentDay: LocalDate?,
     kalendarType: KalendarType,
     modifier: Modifier = Modifier,
@@ -111,7 +113,8 @@ fun Kalendar(
     headerContent: (@Composable (Month, Int) -> Unit)? = null,
     onDayClick: (LocalDate, List<KalendarEvent>) -> Unit = { _, _ -> },
     onRangeSelected: (KalendarSelectedDayRange, List<KalendarEvent>) -> Unit = { _, _ -> },
-    onErrorRangeSelected: (RangeSelectionError) -> Unit = {}
+    onErrorRangeSelected: (RangeSelectionError) -> Unit = {},
+    coloredDates : List<LocalDate> = emptyList()
 ) {
     when (kalendarType) {
         KalendarType.Oceanic -> {
@@ -146,7 +149,8 @@ fun Kalendar(
                 headerContent = headerContent,
                 daySelectionMode = daySelectionMode,
                 onRangeSelected = onRangeSelected,
-                onErrorRangeSelected = onErrorRangeSelected
+                onErrorRangeSelected = onErrorRangeSelected,
+                coloredDates = coloredDates
             )
         }
     }
