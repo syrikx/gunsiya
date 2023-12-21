@@ -27,12 +27,14 @@ import com.himanshoe.kalendar.KalendarType
 import com.himanshoe.kalendar.color.KalendarColors
 import com.himanshoe.kalendar.ui.component.day.KalendarDayKonfig
 import com.himanshoe.kalendar.ui.firey.DaySelectionMode
+import com.hyunakim.gunsiya.GunsiyaApplication
 import com.hyunakim.gunsiya.data.Record
 import com.hyunakim.gunsiya.data.User
 import com.hyunakim.gunsiya.ui.AppViewModelProvider
 import com.hyunakim.gunsiya.ui.theme.KalendarTheme
 import com.hyunakim.gunsiya.ui.user.UserSelect
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.launch
 import kotlinx.datetime.Clock
 import kotlinx.datetime.LocalDate
@@ -46,7 +48,9 @@ fun HomeScreen(
     viewModel: HomeViewModel = viewModel(factory= AppViewModelProvider.Factory)
 ) {
     val homeUiState by viewModel.homeUiState.collectAsState()
+//    val currentUser by GunsiyaApplication.UserManager.currentUser.collectAsState()
     Text("${viewModel.currentUser.collectAsState().value.name}님 환영합니다.")
+//    Text("${currentUser?.name ?: "사용자"}님 환영합니다.")
     HomeBody(
         userList = homeUiState.userList,
 //        onItemClick = navigateToItemUpdate,
@@ -220,6 +224,22 @@ private fun updateAndSaveRecord(
     viewModel: HomeViewModel,
     coroutineScope: CoroutineScope
 ) {
+//    coroutineScope.launch {
+//        val currentUser = GunsiyaApplication.UserManager.currentUser.firstOrNull()
+//        val userId = currentUser?.id ?: 0
+//
+//        val record = com.hyunakim.gunsiya.data.Record(
+//            userId = userId,
+//            date = viewModel.selectedDay.value.toString(),
+//            isAtropineDrop = isAtropineDrop,
+//            timeOutdoorActivity = timeOutdoorActivity,
+//            timeCloseWork = timeCloseWork
+//        )
+//
+//        // 'record' 객체를 사용하는 로직
+//        // 예: 데이터베이스 업데이트, API 호출 등
+//    }
+
     val record = com.hyunakim.gunsiya.data.Record(
         userId = viewModel.currentUser.value.id,
         date = viewModel.selectedDay.value.toString(),

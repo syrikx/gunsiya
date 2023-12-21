@@ -84,4 +84,13 @@ dependencies {
     debugImplementation("androidx.compose.ui:ui-tooling")
 
     implementation ("org.jetbrains.kotlinx:kotlinx-datetime:0.4.0")
+
+    //Retrofit
+    implementation ("com.squareup.retrofit2:retrofit:2.9.0")
+    implementation ("com.squareup.retrofit2:converter-gson:2.9.0")
+    implementation ("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.5.0")
+    implementation ("com.github.skydoves:landscapist-coil:2.2.12")
+//    implementation ("com.github.skydoves:landscapist-glide:2.2.12")
+
+
 }

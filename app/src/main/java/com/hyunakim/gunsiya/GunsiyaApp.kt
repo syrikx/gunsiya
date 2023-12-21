@@ -67,8 +67,7 @@ fun GunsiyaNavHost(
             )
         }
         composable(route = Routes.Qna.route){
-            QnaScreen(
-                            )
+            QnaScreen()
         }
     }
 

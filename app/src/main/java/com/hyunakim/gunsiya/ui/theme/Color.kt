@@ -1,13 +1,23 @@
 package com.hyunakim.gunsiya.ui.theme
 
 import androidx.compose.material.darkColors
+import androidx.compose.material.lightColors
 import androidx.compose.ui.graphics.Color
 
 val Green500 = Color(0xFF1EB980)
 val DarkBlue900 = Color(0xFF26282F)
+val Teal200 = Color(0xFF03DAC5)
 
 // Rally is always dark themed.
-val ColorPalette = darkColors(
+
+val LightPalette = lightColors(
+    primary = Green500,
+    surface = Teal200,
+    onSurface = Color.White,
+    background = DarkBlue900,
+    onBackground = Color.White
+)
+val DarkPalette = darkColors(
     primary = Green500,
     surface = DarkBlue900,
     onSurface = Color.White,
@@ -33,7 +43,8 @@ val md_theme_light_onError = Color(0xFFFFFFFF)
 val md_theme_light_onErrorContainer = Color(0xFF410002)
 val md_theme_light_background = Color(0xFFFFFBFF)
 val md_theme_light_onBackground = Color(0xFF201A1B)
-val md_theme_light_surface = Color(0xFFFFFBFF)
+//val md_theme_light_surface = Color(0xFFFFFBFF)
+val md_theme_light_surface = Color.LightGray
 val md_theme_light_onSurface = Color(0xFF201A1B)
 val md_theme_light_surfaceVariant = Color(0xFFF2DDE2)
 val md_theme_light_onSurfaceVariant = Color(0xFF514347)

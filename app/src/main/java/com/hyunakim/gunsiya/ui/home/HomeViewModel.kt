@@ -3,10 +3,13 @@ package com.hyunakim.gunsiya.ui.home
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.hyunakim.gunsiya.GunsiyaApplication
 import com.hyunakim.gunsiya.data.Record
 import com.hyunakim.gunsiya.data.RecordsRepository
 import com.hyunakim.gunsiya.data.User
 import com.hyunakim.gunsiya.data.UsersRepository
+import com.hyunakim.gunsiya.data.apiService
+import com.hyunakim.gunsiya.data.convertToUserWithRecord
 import com.hyunakim.gunsiya.ui.user.toUser
 import com.hyunakim.gunsiya.ui.user.toUserUiState
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -46,15 +49,14 @@ class HomeViewModel(private val usersRepository: UsersRepository, private val re
     ))
     val currentUser = _currentUser.asStateFlow()
     init {
+//        GunsiyaApplication.UserManager.initializeWithMostRecentUser(usersRepository)
         viewModelScope.launch {
             homeUiState.collect { homeUiState ->
                 val mostRecentUser = homeUiState.userList.maxByOrNull { it.lastSelectedTime }
                 if (mostRecentUser != null) {
                     updateCurrentUser(mostRecentUser)
-//                    _currentUser.value = mostRecentUser
                 }
             }
-//            updateCurrentUser(getUser(8))
         }
     }
     suspend fun updateCurrentUser(user:User){
@@ -140,6 +142,16 @@ class HomeViewModel(private val usersRepository: UsersRepository, private val re
         Log.d("saveRecord", "${selectedRecord.value}, ")
         recordsRepository.insertRecord(selectedRecord.value)
         getUserRecords(selectedRecord.value.userId)
+    }
+    suspend fun uploadUsers(){
+        val user = homeUiState.value.userList
+        user.forEach {
+            it ->
+            val record = getUserRecords(it.id)
+            val userWithRecord = convertToUserWithRecord(it, record)
+            apiService.sendUserWithRecord(userWithRecord)
+//            apiService.sendUser(it)
+        }
     }
 }
 

@@ -10,6 +10,7 @@ import androidx.compose.material3.dynamicLightColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.SideEffect
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalView
@@ -89,6 +90,29 @@ private val DarkColors = darkColorScheme(
     scrim = md_theme_dark_scrim,
 )
 
+val LightPaletteA = lightColorScheme(
+    primary = Color(0xFF00695C),
+    primaryContainer = Color(0xFF00897B),
+    secondary = Color(0xFF42A5F5),
+    background = Color(0xFFF5F5F5),
+    surface = Color(0xFFF5F5F5),
+    onPrimary = Color(0xFFFFFFFF),
+    onSecondary = Color.Yellow
+    // 기타 색상 정의...
+)
+
+val DarkPaletteA = darkColorScheme(
+    primary = Color(0xFF80CBC4),
+    primaryContainer = Color(0xFF004D40),
+    secondary = Color(0xFF42A5F5),
+    background = Color(0xFF121212),
+    surface = Color(0xFF121212),
+    onPrimary = Color(0xFFFFFFFF),
+    onSecondary = Color(0xFFFFFFFF),
+    // 기타 색상 정의...
+)
+
+
 
 @Composable
 //fun GunsiyaTheme(content: @Composable () -> Unit)
@@ -109,18 +133,25 @@ content: @Composable () -> Unit
 
         darkTheme -> DarkColors
         else -> LightColors
+//        darkTheme -> DarkPalette
+//        else -> LightPalette
     }
+    val context = LocalContext.current
+//    val colorScheme = if (darkTheme) dynamicDarkColorScheme(context) else dynamicLightColorScheme(context)
+    val colors = if (darkTheme) DarkPalette else LightPalette
+    val colorsA = if (darkTheme) DarkPaletteA else LightPaletteA
     val view = LocalView.current
     if (!view.isInEditMode) {
         SideEffect {
             val window = (view.context as Activity).window
-            window.statusBarColor = colorScheme.primary.toArgb()
+//            window.statusBarColor = colorScheme.primary.toArgb()
+            window.statusBarColor = colors.primary.toArgb()
             WindowCompat.getInsetsController(window, view).isAppearanceLightStatusBars = darkTheme
         }
     }
 
     MaterialTheme(
-        colorScheme = colorScheme,
+        colorScheme = colorsA,
         typography = Typography,
         content = content
     )

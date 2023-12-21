@@ -7,6 +7,7 @@ import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
 import com.hyunakim.gunsiya.GunsiyaApplication
 import com.hyunakim.gunsiya.ui.home.HomeViewModel
+import com.hyunakim.gunsiya.ui.qna.QnaViewModel
 import com.hyunakim.gunsiya.ui.user.UserEntryViewModel
 
 object AppViewModelProvider {
@@ -23,6 +24,9 @@ object AppViewModelProvider {
         }
         initializer {
             UserEntryViewModel(gunsiyaApplication().container.usersRepository)
+        }
+        initializer {
+            QnaViewModel(gunsiyaApplication().container.qnasRepository)
         }
 //
 //        // Initializer for ItemDetailsViewModel
