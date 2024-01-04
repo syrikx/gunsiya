@@ -5,11 +5,14 @@ import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface QnaDao {
-    @Insert(onConflict = OnConflictStrategy.IGNORE)
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insert(qna: Qna) // 질문 생성
 
     @Query("SELECT * FROM qnas WHERE qnaId = :qnaId")
     fun getQna(qnaId: String): Flow<Qna> // 특정 질문 읽기
+
+//    @Query("SELECT * FROM qnas WHERE patient = :patient")
+//    fun getQnasByPatient(patient : String): List<Flow<Qna>>
 
     @Update
     suspend fun update(qna: Qna) // 질문 업데이트

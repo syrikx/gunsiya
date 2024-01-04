@@ -6,12 +6,13 @@ interface QnasRepository {
     /**
      * 모든 Qna 데이터를 스트림으로 검색합니다.
      */
-    fun getAllQnasStream(): Flow<List<Qna>>
+    fun getAllQnas(): Flow<List<Qna>>
 
     /**
      * 주어진 [id]와 일치하는 Qna 데이터를 스트림으로 검색합니다.
      */
-    fun getQnaStream(id: String): Flow<Qna?>
+    fun getQna(id: String): Flow<Qna?>
+//    fun getQnaByPatient(patient: String): List<Flow<Qna?>>
 
     /**
      * 데이터 소스에 Qna를 삽입합니다.
@@ -29,6 +30,6 @@ interface QnasRepository {
     suspend fun updateQna(qna: Qna)
 
     // 서버에서 Qna 데이터를 가져와 로컬 데이터베이스를 업데이트하는 메서드
-    suspend fun fetchQnasFromServer()
+    suspend fun fetchQnasByPatientFromServer(patientId: String)
 }
 

@@ -49,8 +49,7 @@ fun HomeScreen(
 ) {
     val homeUiState by viewModel.homeUiState.collectAsState()
 //    val currentUser by GunsiyaApplication.UserManager.currentUser.collectAsState()
-    Text("${viewModel.currentUser.collectAsState().value.name}님 환영합니다.")
-//    Text("${currentUser?.name ?: "사용자"}님 환영합니다.")
+//    Text("${viewModel.currentUser.collectAsState().value.name}님 환영합니다.")
     HomeBody(
         userList = homeUiState.userList,
 //        onItemClick = navigateToItemUpdate,
@@ -75,7 +74,7 @@ fun HomeBody(userList: List<User>,
         val coroutineScope = rememberCoroutineScope()
         if (userList.isEmpty()) {
             Text(
-                text = "등록된 유저가 없습니다.",
+                text = "먼저 USER 탭에서 사용자 등록 하세요",
                 textAlign = TextAlign.Center
             )
         } else {

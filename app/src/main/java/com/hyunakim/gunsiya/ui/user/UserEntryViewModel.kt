@@ -71,7 +71,9 @@ class UserEntryViewModel(private val usersRepository: UsersRepository) : ViewMod
 
     private fun validateInput(uiState: UserDetails = userUiState.userDetails): Boolean {
         return with(uiState) {
-            name.isNotBlank() && birthDate.isNotBlank() && hospitalCode.isNotBlank() && patientCode.isNotBlank()
+            name.isNotBlank() &&
+                    birthDate.isNotBlank() && birthDate.length == 8 &&
+                    hospitalCode.isNotBlank() && patientCode.isNotBlank()
         }
     }
 

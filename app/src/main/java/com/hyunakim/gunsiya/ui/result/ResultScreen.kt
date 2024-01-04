@@ -4,8 +4,8 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.material.Button
-import androidx.compose.material.Text
+import androidx.compose.material3.Button
+import androidx.compose.material3.Text
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -63,7 +63,7 @@ fun Upload(
             },
             modifier = Modifier.fillMaxWidth()
         ) {
-            Text(text = "Upload")
+            Text(text = "데이터 업로드")
         }
         DisplayImageFromUrl(userList = homeUiState.userList, viewModel= viewModel)
     }
@@ -71,7 +71,7 @@ fun Upload(
 
 fun formatTime(timeInMillis: Long): String {
     // SimpleDateFormat 등을 사용하여 시간을 원하는 형식으로 변환합니다.
-    return if (timeInMillis == 0L) "Never uploaded"
+    return if (timeInMillis == 0L) "아직 접안 데이터를 업로드 한 적이 없습니다."
     else SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault()).format(Date(timeInMillis))
 }
 
@@ -116,7 +116,7 @@ fun DisplayImageFromUrl(userList : List<User>, viewModel: HomeViewModel = viewMo
                 },
                 // shows an error text if fail to load an image.
                 failure = {
-                    Text(text = "image request failed.")
+                    Text(text = "아직 결과 레포트가 작성되지 않았습니다.")
                 })
 //                imageOptions = ImageOptions(
 //                    contentScale = ContentScale.Crop,
