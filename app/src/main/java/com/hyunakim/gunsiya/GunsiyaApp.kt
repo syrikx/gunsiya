@@ -11,6 +11,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -27,8 +28,12 @@ import com.hyunakim.gunsiya.ui.user.UserScreen
 
 @Composable
 fun GunsiyaApp(
+    alarmManagerHelper: AlarmManagerHelper,
     navController: NavHostController = rememberNavController()
 ){
+    val mainViewModel: MainViewModel = viewModel(
+        factory = MainViewModelFactory(alarmManagerHelper)
+    )
     GunsiyaTheme {
 //        val backStackEntry by navController.currentBackStackEntryAsState()
 //        val currentScreen = GunsiyaScreen.valueOf(
@@ -66,16 +71,15 @@ fun GunsiyaNavHost(
             HomeScreen(
             )
         }
-        composable(route = Routes.User.route){
-            UserScreen(
-            )
-        }
         composable(route = Routes.Result.route){
             ResultScreen(
             )
         }
         composable(route = Routes.Qna.route){
             QnaScreen()
+        }
+        composable(route = Routes.User.route){
+            UserScreen()
         }
     }
 

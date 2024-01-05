@@ -43,5 +43,5 @@ object QnaDesitination : GunsiyaDestination {
 }
 
 //val gunsiyaTabRowScreens = listOf(GunsiyaScreen.Home, GunsiyaScreen.User, GunsiyaScreen.Result, GunsiyaScreen.Qna)
-val gunsiyaTabRowScreens = listOf(HomeDestination, UserDestination, ResultDestination, QnaDesitination)
+val gunsiyaTabRowScreens = listOf(HomeDestination, ResultDestination, QnaDesitination, UserDestination)
 
