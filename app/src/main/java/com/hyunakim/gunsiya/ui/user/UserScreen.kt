@@ -46,6 +46,8 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.hyunakim.gunsiya.AlarmManagerHelper
+import com.hyunakim.gunsiya.MainViewModelFactory
 import com.hyunakim.gunsiya.data.User
 import com.hyunakim.gunsiya.ui.AppViewModelProvider
 import com.hyunakim.gunsiya.ui.MainViewModel
@@ -60,11 +62,14 @@ import java.util.regex.Pattern
 fun UserScreen(
     modifier: Modifier = Modifier,
     viewModel: UserEntryViewModel = viewModel(factory= AppViewModelProvider.Factory),
-    mainViewModel: MainViewModel = viewModel()
 ) {
     val allUsersState by viewModel.allUsersState.collectAsState()
-    val alarmTime by mainViewModel.alarmTime.collectAsState() // 현재 설정된 알림 시각
     var showTimePicker by remember { mutableStateOf(false) }
+    val context = LocalContext.current
+    val alarmManagerHelper = remember { AlarmManagerHelper(context) }
+    val mainViewModel: MainViewModel = viewModel(factory = MainViewModelFactory(alarmManagerHelper))
+    val alarmTime by mainViewModel.alarmTime.collectAsState() // 현재 설정된 알림 시각
+
 
     Scaffold(
         modifier = modifier,
@@ -72,11 +77,12 @@ fun UserScreen(
             FloatingActionButton(onClick = { showTimePicker = true }) {
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(4.dp)
+                    horizontalArrangement = Arrangement.spacedBy(4.dp),
+                    modifier = Modifier.padding(horizontal = 16.dp) // Increase side padding
                 ) {
                     Icon(Icons.Default.Notifications, contentDescription = "알림 설정")
                     Text(
-                        text = if (alarmTime.isNotEmpty()) "알림: $alarmTime" else "알림 없음",
+                        text = if (alarmTime.isNotEmpty()) "$alarmTime" else "알림 없음",
                         style = MaterialTheme.typography.bodyMedium
                     )
                 }

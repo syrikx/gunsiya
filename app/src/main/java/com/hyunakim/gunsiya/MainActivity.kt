@@ -7,10 +7,10 @@ import androidx.activity.compose.setContent
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        val alarmManagerHelper = AlarmManagerHelper(this)
+//        val alarmManagerHelper = AlarmManagerHelper(this)
 
         setContent {
-            GunsiyaApp(alarmManagerHelper)
+            GunsiyaApp()
         }
     }
 }

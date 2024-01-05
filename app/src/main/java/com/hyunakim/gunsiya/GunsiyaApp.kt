@@ -28,12 +28,12 @@ import com.hyunakim.gunsiya.ui.user.UserScreen
 
 @Composable
 fun GunsiyaApp(
-    alarmManagerHelper: AlarmManagerHelper,
+//    alarmManagerHelper: AlarmManagerHelper,
     navController: NavHostController = rememberNavController()
 ){
-    val mainViewModel: MainViewModel = viewModel(
-        factory = MainViewModelFactory(alarmManagerHelper)
-    )
+//    val mainViewModel: MainViewModel = viewModel(
+//        factory = MainViewModelFactory(alarmManagerHelper)
+//    )
     GunsiyaTheme {
 //        val backStackEntry by navController.currentBackStackEntryAsState()
 //        val currentScreen = GunsiyaScreen.valueOf(
