@@ -3,7 +3,6 @@ package com.hyunakim.gunsiya.ui.home
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.hyunakim.gunsiya.GunsiyaApplication
 import com.hyunakim.gunsiya.data.Record
 import com.hyunakim.gunsiya.data.RecordsRepository
 import com.hyunakim.gunsiya.data.User
@@ -87,13 +86,16 @@ class HomeViewModel(private val usersRepository: UsersRepository, private val re
 //        )
     val recordsState = MutableStateFlow(RecordsState())
 
+    private val _hasChanges = MutableStateFlow(false)
+    val hasChanges: StateFlow<Boolean> = _hasChanges.asStateFlow()
+
     private val _selectedRecord = MutableStateFlow(
         com.hyunakim.gunsiya.data.Record(
             userId = 0,
             date = "",
             isAtropineDrop = false,
-            timeOutdoorActivity = 0,
-            timeCloseWork = 0,
+            timeOutdoorActivity = 0.0,
+            timeCloseWork = 0.0,
         )
     )
 
@@ -104,9 +106,17 @@ class HomeViewModel(private val usersRepository: UsersRepository, private val re
             updateSelectedRecord(getRecord(currentUser.value.id,selectedDay.toString()))
         }
     }
-    fun updateSelectedRecord(record: Record){
-        _selectedRecord.value = record
+    fun updateSelectedRecord(record: Record) {
+        if (_selectedRecord.value != record) {
+            _selectedRecord.value = record
+            _hasChanges.value = true
+        }
     }
+
+    fun resetChangesFlag() {
+        _hasChanges.value = false
+    }
+
     fun getSelectedRecord(recordsState: RecordsState, selectedDate : LocalDate){
         var temp = recordsState.recordList.firstOrNull { LocalDate.parse(it.date) == selectedDate }
         if (temp != null) {
@@ -116,8 +126,8 @@ class HomeViewModel(private val usersRepository: UsersRepository, private val re
                 userId =selectedRecord.value.userId,
                 date = selectedDate.toString(),
                 isAtropineDrop = false,
-                timeOutdoorActivity = 0,
-                timeCloseWork = 0,
+                timeOutdoorActivity = 0.0,
+                timeCloseWork = 0.0,
             )
             _selectedRecord.value = initSlectedRecord
         }
@@ -143,15 +153,44 @@ class HomeViewModel(private val usersRepository: UsersRepository, private val re
         recordsRepository.insertRecord(selectedRecord.value)
         getUserRecords(selectedRecord.value.userId)
     }
-    suspend fun uploadUsers(){
-        val user = homeUiState.value.userList
-        user.forEach {
-            it ->
-            val record = getUserRecords(it.id)
-            val userWithRecord = convertToUserWithRecord(it, record)
-            apiService.sendUserWithRecord(userWithRecord)
-//            apiService.sendUser(it)
+    private val _uploadStatus = MutableStateFlow<String?>(null)
+    val uploadStatus: StateFlow<String?> = _uploadStatus.asStateFlow()
+    suspend fun uploadUsers() {
+        val users = homeUiState.value.userList
+        var success = true
+        var message = "업로드 성공"
+
+        for (user in users) {
+            try {
+                val records = getUserRecords(user.id)
+                val userWithRecord = convertToUserWithRecord(user, records)
+                val response = apiService.sendUserWithRecord(userWithRecord)
+                Log.d("uploadUsers response", response.toString())
+                if (!response.success) {
+                    success = false
+                    message = response.message // 서버에서 반환된 실패 메시지
+                    break
+                }
+            } catch (e: Exception) {
+                success = false
+                message = "업로드 실패: ${e.message}"
+                break
+            }
         }
+
+        if (!success) {
+            // 업로드가 실패한 경우
+            _uploadStatus.value = message
+            Log.d("uploadUsers Fail", "Fail")
+        } else {
+            // 모든 업로드가 성공한 경우
+            _uploadStatus.value = "모든 사용자 데이터가 성공적으로 업로드되었습니다."
+            Log.d("uploadUsers Success", "Success")
+        }
+        resetChangesFlag()
+    }
+    fun resetUploadStatus() {
+        _uploadStatus.value = null
     }
 }
 

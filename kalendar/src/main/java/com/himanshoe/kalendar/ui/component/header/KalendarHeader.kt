@@ -14,6 +14,7 @@
 
 package com.himanshoe.kalendar.ui.component.header
 
+import android.util.Log
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.ContentTransform
 import androidx.compose.animation.ExperimentalAnimationApi
@@ -165,8 +166,17 @@ private fun getTitleText(month: Month, year: Int): String {
     val monthDisplayName = month.getDisplayName(TextStyle.FULL, Locale.getDefault())
         .lowercase()
         .replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString() }
-    val shortYear = year.toString().takeLast(2)
-    return "$monthDisplayName '$shortYear"
+    var shortYear = ""
+    var titleText = ""
+    if (Locale.getDefault().toString() == "ko_KR") {
+        shortYear = year.toString().takeLast(2) + "년"
+        titleText = "'$shortYear  $monthDisplayName "
+    } else {
+        shortYear = year.toString().takeLast(2)
+        titleText = "$monthDisplayName '$shortYear"
+    }
+//    Log.d("getTitleText", Locale.getDefault().toString())
+    return titleText
 }
 
 @MultiplePreviews

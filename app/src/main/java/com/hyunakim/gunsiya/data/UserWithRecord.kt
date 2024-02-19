@@ -4,8 +4,8 @@ data class UserWithRecord(
     val birthday: String,
     val didDropAtropine: Map<String, Boolean>,
     val hospitalCode: String,
-    val timeSpentOutdoors: Map<String, Int>,
-    val timeSpentOnNearbyTasks: Map<String, Int>,
+    val timeSpentOutdoors: Map<String, Double>,
+    val timeSpentOnNearbyTasks: Map<String, Double>,
     val id: String,
     val name: String,
 //    val date: Map<String, String>
@@ -13,8 +13,8 @@ data class UserWithRecord(
 
 fun convertToUserWithRecord(user: User, records: List<Record>): UserWithRecord {
     val didDropAtropine = mutableMapOf<String, Boolean>()
-    val timeSpentOutdoors = mutableMapOf<String, Int>()
-    val timeSpentOnNearbyTasks = mutableMapOf<String, Int>()
+    val timeSpentOutdoors = mutableMapOf<String, Double>()
+    val timeSpentOnNearbyTasks = mutableMapOf<String, Double>()
 
     for (record in records) {
         didDropAtropine[record.date] = record.isAtropineDrop

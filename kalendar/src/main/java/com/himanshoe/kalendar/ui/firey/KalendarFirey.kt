@@ -15,6 +15,7 @@
 package com.himanshoe.kalendar.ui.firey
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.gestures.detectHorizontalDragGestures
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -29,6 +30,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -51,6 +53,7 @@ import kotlinx.datetime.TimeZone
 import kotlinx.datetime.plus
 import kotlinx.datetime.toLocalDate
 import kotlinx.datetime.todayIn
+import java.lang.Math.abs
 
 private val WeekDays = listOf("월", "화", "수", "목", "금", "토", "일")
 
@@ -86,7 +89,8 @@ internal fun KalendarFirey(
     onDayClick: (LocalDate, List<KalendarEvent>) -> Unit = { _, _ -> },
     onRangeSelected: (KalendarSelectedDayRange, List<KalendarEvent>) -> Unit = { _, _ -> },
     onErrorRangeSelected: (RangeSelectionError) -> Unit = {},
-    coloredDates : List<LocalDate> = listOf(Clock.System.todayIn(TimeZone.currentSystemDefault()).plus(1,DateTimeUnit.DAY), Clock.System.todayIn(TimeZone.currentSystemDefault()).plus(2,DateTimeUnit.DAY))
+    coloredDates : List<LocalDate> = listOf(Clock.System.todayIn(TimeZone.currentSystemDefault()).plus(1,DateTimeUnit.DAY), Clock.System.todayIn(TimeZone.currentSystemDefault()).plus(2,DateTimeUnit.DAY)),
+    onMonthChange: (year: Int, month: Month) -> Unit
 ) {
     val today = currentDay ?: Clock.System.todayIn(TimeZone.currentSystemDefault())
     val selectedRange = remember { mutableStateOf<KalendarSelectedDayRange?>(null) }
@@ -106,6 +110,7 @@ internal fun KalendarFirey(
     val monthValue = currentMonth.value.toString().padStart(2, '0')
     val startDayOfMonth = "$currentYear-$monthValue-01".toLocalDate()
     val firstDayOfMonth = startDayOfMonth.dayOfWeek
+    val dragAmountState = remember { mutableStateOf(0f) }
 
     Column(
         modifier = modifier
@@ -114,7 +119,42 @@ internal fun KalendarFirey(
             )
             .wrapContentHeight()
             .fillMaxWidth()
-            .padding(all = 8.dp)
+            .padding(horizontal = 8.dp)
+            .padding(bottom = 8.dp)
+            .pointerInput(Unit) {
+
+                detectHorizontalDragGestures(onDragStart = { offset ->
+                    dragAmountState.value = 0f  // 드래그 시작 시 드래그 양 초기화
+                }, onDragEnd = {
+                    // 드래그 종료 시 월 변경 처리
+                    val dragThreshold = 200f // 드래그 임계값 설정
+                    // 오른쪽으로 드래그: 이전 달로 전환
+                    if (dragAmountState.value > dragThreshold) {
+                        if (displayedMonth.value == Month.JANUARY) {
+                            displayedYear.value -= 1
+                            displayedMonth.value = Month.DECEMBER
+                        } else {
+                            displayedMonth.value = displayedMonth.value.minus(1)
+                        }
+                        onMonthChange(displayedYear.value, displayedMonth.value)
+                    }
+// 왼쪽으로 드래그: 다음 달로 전환
+                    else if (dragAmountState.value < -dragThreshold) {
+                        if (displayedMonth.value == Month.DECEMBER) {
+                            displayedYear.value += 1
+                            displayedMonth.value = Month.JANUARY
+                        } else {
+                            displayedMonth.value = displayedMonth.value.plus(1)
+                        }
+                        onMonthChange(displayedYear.value, displayedMonth.value)
+                    }
+                }) { change, dragAmount ->
+                    dragAmountState.value += dragAmount  // 드래그 양 누적
+                    change.consume()
+                }
+            }
+
+
     ) {
         if (headerContent != null) {
             headerContent(currentMonth, currentYear)
@@ -126,14 +166,16 @@ internal fun KalendarFirey(
                 onPreviousClick = {
                     displayedYear.value -= if (currentMonth == Month.JANUARY) 1 else 0
                     displayedMonth.value -= 1
+                    onMonthChange(displayedYear.value, displayedMonth.value)
                 },
                 onNextClick = {
                     displayedYear.value += if (currentMonth == Month.DECEMBER) 1 else 0
                     displayedMonth.value += 1
+                    onMonthChange(displayedYear.value, displayedMonth.value)
                 },
             )
         }
-        Spacer(modifier = Modifier.padding(vertical = 4.dp))
+        Spacer(modifier = Modifier.padding(vertical = 0.dp))
         LazyVerticalGrid(
             modifier = Modifier.fillMaxWidth(),
             columns = GridCells.Fixed(7),
@@ -190,7 +232,7 @@ internal fun KalendarFirey(
                 }
             }
         )
-        Spacer(modifier = Modifier.padding(vertical = 4.dp))
+        Spacer(modifier = Modifier.padding(vertical = 0.dp))
     }
 }
 

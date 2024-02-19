@@ -28,6 +28,7 @@ object AppViewModelProvider {
         initializer {
             QnaViewModel(gunsiyaApplication().container.qnasRepository)
         }
+
 //
 //        // Initializer for ItemDetailsViewModel
 //        initializer {

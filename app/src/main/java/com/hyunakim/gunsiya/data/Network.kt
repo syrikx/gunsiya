@@ -14,7 +14,7 @@ interface ApiService {
     suspend fun sendUser(@Body user: User)
 
     @POST("users")
-    suspend fun sendUserWithRecord(@Body userWithRecord: UserWithRecord)
+    suspend fun sendUserWithRecord(@Body userWithRecord: UserWithRecord): ApiResponse
 
     @POST("records")
     suspend fun sendRecord(@Body record: Record)
@@ -25,6 +25,8 @@ interface ApiService {
     @POST("qna")
     suspend fun sendQna(@Body qna: Qna): PostQnaResponse
 }
+
+data class ApiResponse(val success: Boolean, val message: String)
 
 //data class QnaResponse(
 //    val status: String,

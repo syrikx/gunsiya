@@ -114,7 +114,8 @@ fun KalendarWithEvent(
     onDayClick: (LocalDate, List<KalendarEvent>) -> Unit = { _, _ -> },
     onRangeSelected: (KalendarSelectedDayRange, List<KalendarEvent>) -> Unit = { _, _ -> },
     onErrorRangeSelected: (RangeSelectionError) -> Unit = {},
-    coloredDates : List<LocalDate> = emptyList()
+    coloredDates : List<LocalDate> = emptyList(),
+    onMonthChange: (year: Int, month: Month) -> Unit
 ) {
     when (kalendarType) {
         KalendarType.Oceanic -> {
@@ -150,7 +151,8 @@ fun KalendarWithEvent(
                 daySelectionMode = daySelectionMode,
                 onRangeSelected = onRangeSelected,
                 onErrorRangeSelected = onErrorRangeSelected,
-                coloredDates = coloredDates
+                coloredDates = coloredDates,
+                onMonthChange = onMonthChange,
             )
         }
     }

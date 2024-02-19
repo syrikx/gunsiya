@@ -55,7 +55,7 @@ fun QnaScreen(viewModel: QnaViewModel = viewModel(factory= AppViewModelProvider.
 
 //    Column(modifier = Modifier.padding(16.dp)) {
     Column(modifier = Modifier.fillMaxSize()) {
-        Text(text = "상담실", style = MaterialTheme.typography.headlineMedium)
+        Text(text = "Q&A", style = MaterialTheme.typography.headlineMedium)
 
         // 질문을 입력하는 텍스트 필드
         OutlinedTextField(

@@ -4,6 +4,10 @@ buildscript {
         set("lifecycle_version", "2.6.1")
         set("room_version", "2.5.2")
     }
+    dependencies {
+        classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:1.9.0")
+        // 기타 클래스패스 종속성
+    }
 }
 //plugins {
 //    id("com.android.application") version "8.1.0" apply false

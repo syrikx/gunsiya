@@ -8,7 +8,7 @@ import androidx.room.TypeConverter
 import androidx.room.TypeConverters
 import kotlinx.datetime.LocalDateTime
 
-@Database(entities = [User::class, Record::class, Qna::class], version = 12)
+@Database(entities = [User::class, Record::class, Qna::class], version = 13)
 @TypeConverters(Converters::class)
 abstract class GunsiyaDatabase : RoomDatabase() {
     abstract fun userDao(): UserDao
